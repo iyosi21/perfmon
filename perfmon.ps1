@@ -17,12 +17,14 @@ while(1){
     $diskinfo = Get-WmiObject Win32_PerfRawData_PerfDisk_PhysicalDisk
     
     #タイムスタンプ取得
-    $datetime = $dataproc.Timestamp.ToString('yyyy/mm/dd HH:mm:ss')
+    $datetime = Get-Date -UFormat "%H:%M:%S"
 
     #アウトプット
     Write-Output(@($item,  #CPUのトータルのみ出力`
-                   $datamem.FreePhysicalMemory, $datamem.TotalVisibleMemorySize, #物理メモリの空き容量と全体容量`
-                   $datamem.FreeVirtualMemory, $datamem.TotalVirtualMemorySize, #仮想メモリの空き容量と全体容量`
+                   ($datamem.TotalVisibleMemorySize - $datamem.FreePhysicalMemory), #物理メモリの使用容量`
+                   (($datamem.TotalVisibleMemorySize - $datamem.FreePhysicalMemory) / $datamem.TotalVisibleMemorySize), #物理メモリ使用のパーセンテージ`
+                   ($datamem.TotalVirtualMemorySize - $datamem.FreeVirtualMemory), #仮想メモリの使用容量`
+                   (($datamem.TotalVirtualMemorySize - $datamem.FreeVirtualMemory) / $datamem.TotalVirtualMemorySize), #仮想メモリの空き容量と全体容量`
                    $datedisk, $dateidle, #DiskTimeとIdleTime`
                    $datetime) -join "`t") | out-file -Append "perflog_$filename.csv"   
     #30秒待機
