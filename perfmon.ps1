@@ -1,7 +1,4 @@
-$filename = Get-Date -Format "yyyy-MMdd"
-
-while(1){
-    
+while(1){   
     #CPUのProcessorTime取得
     $dataproc = Get-Counter -Counter "\Processor Information(_Total)\% Processor Time"
     $item = $dataproc.CounterSamples.CookedValue
@@ -14,10 +11,12 @@ while(1){
 
     #メモリデータ取得
     $datamem  = Get-WmiObject Win32_OperatingSystem
-    $diskinfo = Get-WmiObject Win32_PerfRawData_PerfDisk_PhysicalDisk
-    
+
     #タイムスタンプ取得
-    $datetime = Get-Date -UFormat "%H:%M:%S"
+    $filename = Get-Date -Format "yyyy-MMdd"
+    $datetime = Get-Date -Format "HH:mm:ss:"
+    $getmilli = (Get-Date).Millisecond
+  　$datetime = $datetime + $getmilli
 
     #アウトプット
     Write-Output(@($item,  #CPUのトータルのみ出力`
